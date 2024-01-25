@@ -1,13 +1,13 @@
-# Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
+# OMN Token Contract
 
 ```shell
-npx hardhat help
 npx hardhat test
 REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+npx hardhat run scripts/deploy.ts --network testredefi
+```
+
+Deployment address on testReDeFi network:
+
+```
+0x364cfAe1a0f47CeaBB7bbAC0CD2ee3FD31CD9B94
 ```

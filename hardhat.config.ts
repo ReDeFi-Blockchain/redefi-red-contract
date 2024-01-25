@@ -8,10 +8,10 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
     },
-    // testredefi: {
-    //   url: "http://test.redefi.world/rpc",
-    //   accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
-    // }
+    testredefi: {
+      url: "http://test.redefi.world/rpc",
+      accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
+    }
   },
   mocha: {
     timeout: 300000
