@@ -10,9 +10,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 error AccountFrozen();
 
-contract OMNToken is ERC20, Ownable, ERC20Pausable, ERC20Burnable  {
-  string public constant NAME = "On-Chain Money";
-  string public constant SYMBOL = "OMN";
+contract REDToken is ERC20, Ownable, ERC20Pausable, ERC20Burnable  {
+  string public constant NAME = "ReDeFi";
+  string public constant SYMBOL = "RED";
   uint public constant INITIAL_SUPPLY = 500000;
 
   mapping(address => bool) public freezes;

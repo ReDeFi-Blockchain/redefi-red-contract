@@ -9,21 +9,25 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
     },
-    testredefi: {
-      url: "http://test.redefi.world/rpc",
+    testnet: {
+      url: 'http://127.0.0.1:9944',
       accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
     },
-    sepolia: {
-      url: `https://sepolia.infura.io/v3/${secrets.api_key}`,
-      accounts: [secrets.privateKeys[4], secrets.privateKeys[5], secrets.privateKeys[6]]
+    testredefi: {
+      url: 'https://test-layer1.redefi.world',
+      accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
     },
+    // sepolia: {
+    //   url: `https://sepolia.infura.io/v3/${secrets.api_key}`,
+    //   accounts: [secrets.privateKeys[4], secrets.privateKeys[5], secrets.privateKeys[6]]
+    // },
     ethereum: {
-      url: `https://mainnet.infura.io/v3/${secrets.api_key}`,
-      accounts: [secrets.privateKeys[4], secrets.privateKeys[5], secrets.privateKeys[6]]
+      url: `https://mainnet.infura.io/v3/${secrets.apiKey}`,
+      accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
     },
   },
   etherscan: {
-    apiKey: secrets.etherscan_api_key,
+    apiKey: secrets.etherscanApiKey,
   },
   sourcify: {
     enabled: true

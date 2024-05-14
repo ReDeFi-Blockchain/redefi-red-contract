@@ -1,11 +1,15 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const token = await ethers.deployContract("OMNToken", []);
+  const network = await ethers.provider.getNetwork();
+  let options = undefined;
+  if([1899n, 11899n, 47803n, 47803n].indexOf(network.chainId) > -1) options = {gasLimit: 1_700_000};
+
+  const token = await ethers.deployContract("REDToken", [], options);
   await token.waitForDeployment();
 
   console.log(
-    `OMNToken deployed to ${token.target}`
+    `RED token deployed to ${token.target}`
   );
 }
 
