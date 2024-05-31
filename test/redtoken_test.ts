@@ -28,7 +28,7 @@ describe("RED token", function () {
 
     it("Should deploy contract with correct name", async function () {
       const redToken = await loadFixture(deployToken);
-      expect(await redToken.name()).to.equal("ReDeFi");
+      expect(await redToken.name()).to.equal("ReDeFi RED");
     });
 
     it("Should deploy contract with correct initial supply", async function () {

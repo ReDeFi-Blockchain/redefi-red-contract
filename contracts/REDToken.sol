@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 error AccountFrozen();
 
 contract REDToken is ERC20, Ownable, ERC20Pausable, ERC20Burnable  {
-  string public constant NAME = "ReDeFi";
+  string public constant NAME = "ReDeFi RED";
   string public constant SYMBOL = "RED";
   uint public constant INITIAL_SUPPLY = 500000;
 
