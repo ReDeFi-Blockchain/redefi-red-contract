@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
+  "name": "redefi-red-token",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.3",
