@@ -1,11 +1,11 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
-import { secrets } from './secrets';
+import { secrets } from "./secrets";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.20",
-  defaultNetwork: "hardhat",
+  defaultNetwork: "ganache",
   networks: {
     hardhat: {
     },
@@ -17,10 +17,14 @@ const config: HardhatUserConfig = {
       url: 'https://test-layer1.redefi.world',
       accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
     },
-    // sepolia: {
-    //   url: `https://sepolia.infura.io/v3/${secrets.api_key}`,
-    //   accounts: [secrets.privateKeys[4], secrets.privateKeys[5], secrets.privateKeys[6]]
-    // },
+    sepolia: {
+      url: `https://sepolia.infura.io/v3/${secrets.apiKey}`,
+      accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
+    },
+    ganache: {
+      url: "http://0.0.0.0:8545",
+      accounts: ["0x7fc1a1d20704fb542825c5da1cd2e00073b96c90fd3f610ae2d58312e68950da"]
+    },
     ethereum: {
       url: `https://mainnet.infura.io/v3/${secrets.apiKey}`,
       accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
