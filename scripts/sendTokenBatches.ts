@@ -42,7 +42,7 @@ async function main() {
 async function getLastRecepient(tokenAddress: string, batchTransfer: BatchTransfer, holders: string[]) {
   const eventFilter = batchTransfer.filters["ERC20BatchTransfer(address,address,address)"]();
   const currentBlock = await ethers.provider.getBlockNumber();
-  const block = Math.max(currentBlock - 50_000, 0);
+  const block = Math.max(currentBlock - 100_000, 0);
   const events = await batchTransfer.queryFilter(eventFilter, block);
   if (events.length > 0) {
     const lastRecepient = events[events.length - 1].args[2];
