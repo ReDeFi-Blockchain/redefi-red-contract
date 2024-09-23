@@ -11,7 +11,7 @@ async function main() {
   const BATCH_SIZE = 50;
 
   const holders = await readHolders();
-  const tokensPerPerson = Number.parseInt(process.env.TOKENS_PER_PERSON!);
+  const tokensPerPerson = Number.parseFloat(process.env.TOKENS_PER_PERSON!);
   
   const batchTransfer = await ethers.getContractAt("BatchTransfer", process.env.BATCH_CONTRACT_ADDRESS!);
   const [owner] = await ethers.getSigners();
