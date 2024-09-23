@@ -77,8 +77,7 @@ describe("Distribute tokens", function () {
     let maxGas = 0n;
     for (let i = 0; i < holders.length; i += BATCH_SIZE) {
       let length = Math.min(holders.length - i, BATCH_SIZE);
-      let amounts = new Array(length).fill(1);
-      let response = await batchTransfer.batchTransfer(holders.slice(i, i + length), amounts, tokenAddress);
+      let response = await batchTransfer.batchTransfer(holders.slice(i, i + length), 1, tokenAddress);
       let receipt = await ethers.provider.getTransactionReceipt(response.hash);
       totalGasPrice += receipt!.gasUsed;
       if (receipt!.gasUsed > maxGas)
