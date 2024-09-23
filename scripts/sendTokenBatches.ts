@@ -28,10 +28,9 @@ async function main() {
   for (let i = lastRecepientIndex + 1; i < holders.length; i += BATCH_SIZE) {
     await waitForGoodGasPrice();
     const length = Math.max(Math.min(holders.length - i, BATCH_SIZE), 0);
-    const amounts = new Array(length).fill(tokensPerPerson);
     const recepients = holders.slice(i, i + length);
     console.log("Starting batch transfer");
-    const tx = await batchTransfer.batchTransfer(recepients, amounts, tokenAddress, {gasPrice: MAXIMUM_GAS_PRICE, gasLimit: 3100000 });
+    const tx = await batchTransfer.batchTransfer(recepients, tokensPerPerson, tokenAddress, {gasPrice: MAXIMUM_GAS_PRICE, gasLimit: 3100000 });
     console.log("Waiting for receipt");
     await printTransactionFee(tx);
     console.log(i + length, "receivers handled.");
