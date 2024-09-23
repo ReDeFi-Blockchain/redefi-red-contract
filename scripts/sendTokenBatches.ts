@@ -8,7 +8,7 @@ dotenv.config();
 const MAXIMUM_GAS_PRICE = Number.parseInt(process.env.MAXIMUM_GAS_PRICE!);
 
 async function main() {
-  const BATCH_SIZE = 100;
+  const BATCH_SIZE = 50;
 
   const holders = await readHolders();
   const tokensPerPerson = Number.parseInt(process.env.TOKENS_PER_PERSON!);
@@ -29,8 +29,9 @@ async function main() {
     await waitForGoodGasPrice();
     const length = Math.max(Math.min(holders.length - i, BATCH_SIZE), 0);
     const recepients = holders.slice(i, i + length);
+    const amounts = new Array(length).fill(tokensPerPerson);
     console.log("Starting batch transfer");
-    const tx = await batchTransfer.batchTransfer(recepients, tokensPerPerson, tokenAddress, {gasPrice: MAXIMUM_GAS_PRICE, gasLimit: 3100000 });
+    const tx = await batchTransfer.batchTransfer(recepients, amounts, tokenAddress, {gasPrice: MAXIMUM_GAS_PRICE, gasLimit: 3100000 });
     console.log("Waiting for receipt");
     await printTransactionFee(tx);
     console.log(i + length, "receivers handled.");
@@ -41,7 +42,8 @@ async function main() {
 async function getLastRecepient(tokenAddress: string, batchTransfer: BatchTransfer, holders: string[]) {
   const eventFilter = batchTransfer.filters["ERC20BatchTransfer(address,address,address)"]();
   const currentBlock = await ethers.provider.getBlockNumber();
-  const events = await batchTransfer.queryFilter(eventFilter, currentBlock - 50_000);
+  const block = Math.max(currentBlock - 50_000, 0);
+  const events = await batchTransfer.queryFilter(eventFilter, block);
   if (events.length > 0) {
     const lastRecepient = events[events.length - 1].args[2];
     console.log("lastRecepient", lastRecepient);

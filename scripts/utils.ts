@@ -12,7 +12,7 @@ export async function printDeploymentFee(contract: BaseContract) {
 export async function printTransactionFee(tx: ContractTransactionResponse) {
   let receipt;
   while (true) {
-    const result = await tx.wait();
+    const result = await ethers.provider.getTransactionReceipt(tx.hash);
     if (result != null) {
       receipt = result;
       break;

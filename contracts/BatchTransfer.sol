@@ -9,9 +9,13 @@ contract BatchTransfer {
 
   function batchTransfer(
      address[] calldata recipients,
-     uint256 amount,
+     uint256[] calldata amounts,
      address tokenAddress
   ) external payable {
+    if(recipients.length != amounts.length) {
+      revert("wrong length");
+    }
+
     if (tokenAddress == address(0)) {
       revert("can't send eth");
     }
@@ -20,7 +24,7 @@ contract BatchTransfer {
 
     for (uint256 i = 0; i < recipients.length; i++) {
       address recipient = recipients[i];
-      token.transferFrom(msg.sender, recipient, amount);
+      token.transferFrom(msg.sender, recipient, amounts[i]);
     }
     emit ERC20BatchTransfer(tokenAddress, msg.sender, recipients[recipients.length - 1]);
   }
