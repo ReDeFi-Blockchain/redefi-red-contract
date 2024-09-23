@@ -42,6 +42,7 @@ npm install
 cp secrets.example.ts secrets.ts
 ```
 Fill private keys and infura api key.
+
 4. Create `.env` file
 ```
 cp .env.example .env
