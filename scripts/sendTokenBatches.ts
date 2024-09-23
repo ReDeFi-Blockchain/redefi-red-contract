@@ -5,30 +5,30 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const MAXIMUM_GAS_PRICE = ethers.parseUnits("36", "gwei");
+const MAXIMUM_GAS_PRICE = Number.parseInt(process.env.MAXIMUM_GAS_PRICE!);
 
 async function main() {
   const BATCH_SIZE = 100;
-  const AMOUNT = 1;
 
   const holders = await readHolders();
+  const tokensPerPerson = Number.parseInt(process.env.TOKENS_PER_PERSON!);
   
   const batchTransfer = await ethers.getContractAt("BatchTransfer", process.env.BATCH_CONTRACT_ADDRESS!);
   const [owner] = await ethers.getSigners();
 
-  let tokenAddress = process.env.TOKEN_ADDRESS!;
-  const testToken = await ethers.getContractAt("TestToken", tokenAddress);
-  console.log("Sender balance", await testToken.balanceOf(owner));
+  const tokenAddress = process.env.TOKEN_ADDRESS!;
+  const redToken = await ethers.getContractAt("REDToken", tokenAddress);
+  console.log("Sender balance", await redToken.balanceOf(owner));
 
-  let lastRecepientIndex = await getLastRecepient(tokenAddress, batchTransfer, holders);
+  const lastRecepientIndex = await getLastRecepient(tokenAddress, batchTransfer, holders);
   console.log("lastRecepientId", lastRecepientIndex);
-  console.log(`Starting batched sending. Batch size = ${BATCH_SIZE}. Amount =  ${AMOUNT} token per receiver`);
+  console.log(`Starting batched sending. Batch size = ${BATCH_SIZE}. Amount =  ${tokensPerPerson} token per receiver`);
   
 
   for (let i = lastRecepientIndex + 1; i < holders.length; i += BATCH_SIZE) {
     await waitForGoodGasPrice();
-    let length = Math.max(Math.min(holders.length - i, BATCH_SIZE), 0);
-    let amounts = new Array(length).fill(AMOUNT);
+    const length = Math.max(Math.min(holders.length - i, BATCH_SIZE), 0);
+    const amounts = new Array(length).fill(tokensPerPerson);
     const recepients = holders.slice(i, i + length);
     console.log("Starting batch transfer");
     const tx = await batchTransfer.batchTransfer(recepients, amounts, tokenAddress, {gasPrice: MAXIMUM_GAS_PRICE, gasLimit: 3100000 });
@@ -41,9 +41,10 @@ async function main() {
 
 async function getLastRecepient(tokenAddress: string, batchTransfer: BatchTransfer, holders: string[]) {
   const eventFilter = batchTransfer.filters["ERC20BatchTransfer(address,address,address)"]();
-  let events = await batchTransfer.queryFilter(eventFilter);
+  const currentBlock = await ethers.provider.getBlockNumber();
+  const events = await batchTransfer.queryFilter(eventFilter, currentBlock - 50_000);
   if (events.length > 0) {
-    let lastRecepient = events[events.length - 1].args[2];
+    const lastRecepient = events[events.length - 1].args[2];
     console.log("lastRecepient", lastRecepient);
     return holders.indexOf(lastRecepient.toLowerCase());
   } else
@@ -58,12 +59,12 @@ async function waitForGoodGasPrice() {
 
   let lastPriceLogTime = 0;
   while (true) {
-    let feeData = await ethers.provider.getFeeData();
+    const feeData = await ethers.provider.getFeeData();
     if (feeData.gasPrice && feeData.gasPrice <= MAXIMUM_GAS_PRICE)
       break;
     const now = Date.now();
     if (now - lastPriceLogTime > LOG_PERIOD) {
-      console.log("Waiting for good gas price. Current price is", ethers.formatUnits(feeData.gasPrice || 0, "gwei"));
+      console.log("Waiting for good gas price. Current price is", ethers.formatUnits(feeData.gasPrice || 0, "gwei"), "target price", ethers.formatUnits(MAXIMUM_GAS_PRICE, "gwei"));
       lastPriceLogTime = now;
     }
     await sleep(RETRY_PERIOD);

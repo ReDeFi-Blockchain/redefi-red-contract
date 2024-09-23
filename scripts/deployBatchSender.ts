@@ -5,7 +5,7 @@ import { printDeploymentFee } from "./utils";
 
 async function main() {
   console.log("Deploying BatchTransfer");
-  const batchTransfer = await ethers.deployContract("BatchTransfer");
+  const batchTransfer = await ethers.deployContract("BatchTransfer", [], { gasLimit: 500_000 });
   await batchTransfer.waitForDeployment();
   console.log(`BatchTransfer deployed to ${batchTransfer.target}`);
   fs.appendFileSync('contractDeployment.txt', `${Date.now()} ${network.name} BatchTransfer ${batchTransfer.target}\n`);

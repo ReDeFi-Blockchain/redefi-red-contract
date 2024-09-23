@@ -5,7 +5,7 @@ import { secrets } from "./secrets";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.20",
-  defaultNetwork: "ganache",
+  defaultNetwork: "testredefi",
   networks: {
     hardhat: {
     },
@@ -15,6 +15,7 @@ const config: HardhatUserConfig = {
     },
     testredefi: {
       url: 'https://test-layer1.redefi.world',
+      timeout: 30000,
       accounts: [secrets.privateKeys[0], secrets.privateKeys[1], secrets.privateKeys[2]]
     },
     sepolia: {

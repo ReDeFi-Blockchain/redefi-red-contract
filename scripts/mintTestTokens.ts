@@ -8,15 +8,16 @@ async function main() {
   console.log("Minting tokens");
   const holders = await readHolders();
   const testToken = await ethers.getContractAt("TestToken", process.env.TOKEN_ADDRESS!);
+  const tokensPerPerson = Number.parseInt(process.env.TOKENS_PER_PERSON!);
   {
     const [owner] = await ethers.getSigners();
-    const tx = await testToken.mint(await owner.getAddress(), holders.length);
+    const tx = await testToken.mint(await owner.getAddress(), holders.length * tokensPerPerson, { gasLimit: 60_000 });
     await printTransactionFee(tx);
     console.log("Minted");
   }
   {
     console.log("Approving tokens");
-    const tx = await testToken.approve(process.env.BATCH_CONTRACT_ADDRESS!, holders.length);
+    const tx = await testToken.approve(process.env.BATCH_CONTRACT_ADDRESS!, holders.length * tokensPerPerson, { gasLimit: 60_000 });
     await printTransactionFee(tx);
     console.log("Approved");
   }
