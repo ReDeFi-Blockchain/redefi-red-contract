@@ -37,17 +37,25 @@ nvm use lts/iron
 ```
 npm install
 ```
-3. Deploy BatchSender contract.
+3. Create `secrets.ts` file.
+```
+cp secrets.example.ts secrets.ts
+```
+Fill private keys and infura api key.
+
+
+
+5. Deploy BatchSender contract.
 ```
 npx hardhat run scripts/deployBatchSender.ts
 ```
-4. Set `TOKEN_ADDRESS` and `BATCH_CONTRACT_ADDRESS` in .env file.
-5. Approve tokens to be used by BatchSender.
+6. Set `TOKEN_ADDRESS` and `BATCH_CONTRACT_ADDRESS` in .env file.
+7. Approve tokens to be used by BatchSender.
 ```
 npx hardhat run scripts/approveTokensForBatchContract.ts
 ```
-6. Update target gas price `MAXIMUM_GAS_PRICE` in .env file.
-7. Start sending tokens to recepients
+8. Update target gas price `MAXIMUM_GAS_PRICE` in .env file.
+9. Start sending tokens to recepients
 ```
 npx hardhat run scripts/sendTokenBatches.ts
 ```
