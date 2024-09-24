@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { printTransactionFee, readHolders } from "./utils";
+import { addGasLimitForRedefi, printTransactionFee, readHolders } from "./utils";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -8,16 +8,23 @@ async function main() {
   console.log("Minting tokens");
   const holders = await readHolders();
   const testToken = await ethers.getContractAt("TestToken", process.env.TOKEN_ADDRESS!);
-  const tokensPerPerson = Number.parseInt(process.env.TOKENS_PER_PERSON!);
+  let totalAmount = 0n;
+  for (let i = 0; i < holders.length; i++) {
+    totalAmount +=  ethers.parseUnits(holders[i].Amount, 18);
+  }
   {
     const [owner] = await ethers.getSigners();
-    const tx = await testToken.mint(await owner.getAddress(), holders.length * tokensPerPerson, { gasLimit: 60_000 });
+    let options = {};
+    await addGasLimitForRedefi(options, 60_000);
+    const tx = await testToken.mint(await owner.getAddress(), totalAmount, options);
     await printTransactionFee(tx);
-    console.log("Minted");
+    console.log("Minted", totalAmount);
   }
   {
     console.log("Approving tokens");
-    const tx = await testToken.approve(process.env.BATCH_CONTRACT_ADDRESS!, holders.length * tokensPerPerson, { gasLimit: 60_000 });
+    let options = {};
+    await addGasLimitForRedefi(options, 60_000);
+    const tx = await testToken.approve(process.env.BATCH_CONTRACT_ADDRESS!, totalAmount, options);
     await printTransactionFee(tx);
     console.log("Approved");
   }

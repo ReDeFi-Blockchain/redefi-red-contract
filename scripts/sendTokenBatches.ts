@@ -1,11 +1,13 @@
 import { ethers } from "hardhat";
 import { BatchTransfer } from "../typechain-types";
-import { printTransactionFee, readHolders } from "./utils";
+import { addGasLimitForRedefi, printTransactionFee, readHolders } from "./utils";
+import * as fs from 'fs';
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const MAXIMUM_GAS_PRICE = Number.parseInt(process.env.MAXIMUM_GAS_PRICE!);
+const EVENT_FILTER_RANGE = Number.parseInt(process.env.EVENT_FILTER_RANGE!);
 
 async function main() {
   const BATCH_SIZE = 50;
@@ -24,17 +26,23 @@ async function main() {
   console.log("lastRecepientId", lastRecepientIndex);
   console.log(`Starting batched sending. Batch size = ${BATCH_SIZE}. Amount =  ${tokensPerPerson} token per receiver`);
   
+  let options = { gasPrice: MAXIMUM_GAS_PRICE };
+  await addGasLimitForRedefi(options, 3100000);
 
   for (let i = lastRecepientIndex + 1; i < holders.length; i += BATCH_SIZE) {
     await waitForGoodGasPrice();
     const length = Math.max(Math.min(holders.length - i, BATCH_SIZE), 0);
-    const recepients = holders.slice(i, i + length);
-    const amounts = new Array(length).fill(tokensPerPerson);
+    const slice = holders.slice(i, i + length);
+    const recepients = slice.map(holder => holder.HolderAddress);
+    const amounts = slice.map(holder => ethers.parseUnits(holder.Amount, 18));
     console.log("Starting batch transfer");
-    const tx = await batchTransfer.batchTransfer(recepients, amounts, tokenAddress, {gasPrice: MAXIMUM_GAS_PRICE, gasLimit: 3100000 });
+    const tx = await batchTransfer.batchTransfer(recepients, amounts, tokenAddress, options);
     console.log("Waiting for receipt");
     await printTransactionFee(tx);
     console.log(i + length, "receivers handled.");
+    for (let c = 0; c < recepients.length; c++) {
+      fs.appendFileSync('servedRecepients.csv', `"${recepients[c]}","${amounts[c]}","${tx.blockNumber}","${tx.hash}"\n`);
+    }
   }
   console.log("Finished batched sending.")
 }
@@ -42,7 +50,7 @@ async function main() {
 async function getLastRecepient(tokenAddress: string, batchTransfer: BatchTransfer, holders: string[]) {
   const eventFilter = batchTransfer.filters["ERC20BatchTransfer(address,address,address)"]();
   const currentBlock = await ethers.provider.getBlockNumber();
-  const block = Math.max(currentBlock - 100_000, 0);
+  const block = Math.max(currentBlock - EVENT_FILTER_RANGE, 0);
   const events = await batchTransfer.queryFilter(eventFilter, block);
   if (events.length > 0) {
     const lastRecepient = events[events.length - 1].args[2];

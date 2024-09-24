@@ -51,7 +51,14 @@ function parseCSV(filePath: string): Promise<any[]> {
 }
 
 export async function readHolders() {
-  let holders = (await parseCSV('scripts/holders.csv')).map(data => data.HolderAddress);
+  let holders = (await parseCSV('scripts/holders.csv'));
   
   return holders;
+}
+
+export async function addGasLimitForRedefi(options: any, gasLimit: number) {
+  const network = await ethers.provider.getNetwork();
+  if([1899n, 11899n, 47803n, 147803n].indexOf(network.chainId) == -1)
+    return;
+  options.gasLimit = gasLimit;
 }

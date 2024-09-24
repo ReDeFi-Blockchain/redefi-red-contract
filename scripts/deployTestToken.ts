@@ -1,13 +1,14 @@
 import { network, ethers } from "hardhat";
-import type {BaseContract} from "ethers";
 import * as fs from 'fs';
-import { printDeploymentFee } from "./utils";
+import { addGasLimitForRedefi, printDeploymentFee } from "./utils";
 
 async function main() {
   console.log("Deploying TestToken");
-  const token = await ethers.deployContract("TestToken");
+  let options = {};
+  await addGasLimitForRedefi(options, 500_000);
+  const token = await ethers.deployContract("TestToken", options);
   await token.waitForDeployment();
-  console.log(`TestToken deployed to ${token.target}.`);
+  console.log(`TestToken deployed to ${token.target}`);
   fs.appendFileSync('contractDeployment.txt', `${Date.now()} ${network.name} TestToken     ${token.target}\n`);
   await printDeploymentFee(token);
 }

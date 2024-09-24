@@ -1,11 +1,12 @@
 import { network, ethers } from "hardhat";
-import type {BaseContract} from "ethers";
 import * as fs from 'fs';
-import { printDeploymentFee } from "./utils";
+import { addGasLimitForRedefi, printDeploymentFee } from "./utils";
 
 async function main() {
   console.log("Deploying BatchTransfer");
-  const batchTransfer = await ethers.deployContract("BatchTransfer", [], { gasLimit: 500_000 });
+  let options = {};
+  await addGasLimitForRedefi(options, 500_000);
+  const batchTransfer = await ethers.deployContract("BatchTransfer", [], options);
   await batchTransfer.waitForDeployment();
   console.log(`BatchTransfer deployed to ${batchTransfer.target}`);
   fs.appendFileSync('contractDeployment.txt', `${Date.now()} ${network.name} BatchTransfer ${batchTransfer.target}\n`);
