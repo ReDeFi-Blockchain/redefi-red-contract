@@ -62,3 +62,26 @@ export async function addGasLimitForRedefi(options: any, gasLimit: number) {
     return;
   options.gasLimit = gasLimit;
 }
+
+export async function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+export async function waitForGoodGasPrice() {
+  const MAXIMUM_GAS_PRICE = Number.parseInt(process.env.MAXIMUM_GAS_PRICE!);
+  const LOG_PERIOD = 10000;
+  const RETRY_PERIOD = 2000;
+
+  let lastPriceLogTime = 0;
+  while (true) {
+    const feeData = await ethers.provider.getFeeData();
+    if (feeData.gasPrice && feeData.gasPrice <= MAXIMUM_GAS_PRICE)
+      break;
+    const now = Date.now();
+    if (now - lastPriceLogTime > LOG_PERIOD) {
+      console.log("Waiting for good gas price. Current price is", ethers.formatUnits(feeData.gasPrice || 0, "gwei"), "target price", ethers.formatUnits(MAXIMUM_GAS_PRICE, "gwei"));
+      lastPriceLogTime = now;
+    }
+    await sleep(RETRY_PERIOD);
+  }
+}

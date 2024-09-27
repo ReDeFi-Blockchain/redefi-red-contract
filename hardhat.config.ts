@@ -5,7 +5,7 @@ import { secrets } from "./secrets";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.20",
-  defaultNetwork: "testredefi",
+  defaultNetwork: "hardhat",
   networks: {
     hardhat: {
     },
@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
     },
     ganache: {
       url: "http://0.0.0.0:8545",
-      accounts: ["0x7fc1a1d20704fb542825c5da1cd2e00073b96c90fd3f610ae2d58312e68950da"]
+      accounts: ["0x0aad591a56ecceeac1505c482809cd716a2ffebd5193505b4b8cce58c5a5583c"]
     },
     ethereum: {
       url: `https://mainnet.infura.io/v3/${secrets.apiKey}`,

@@ -47,17 +47,19 @@ Fill private keys and infura api key.
 ```
 cp .env.example .env
 ```
-5. Deploy BatchSender contract.
+5. Set `TOKEN_ADDRESS` in `.env` to REDToken address
+6. Set `VESTING_START_SEC` to unix time when vesting should be started. Set `VESTING_DURATION_SEC` to vesting duration in seconds.
+7. Deploy Vesting contract.
 ```
 npx hardhat run scripts/deployBatchSender.ts
 ```
-6. Set `TOKEN_ADDRESS` and `BATCH_CONTRACT_ADDRESS` in .env file.
-7. Approve tokens to be used by BatchSender.
+8. Set `VESTING_CONTRACT_ADDRESS` in .env file.
+9. Approve tokens to be used by Vesting contract.
 ```
-npx hardhat run scripts/approveTokensForBatchContract.ts
+npx hardhat run scripts/approveTokensForVestingContract.ts
 ```
 8. Update target gas price `MAXIMUM_GAS_PRICE` in .env file.
-9. Start sending tokens to recepients
+9. Allocate tokens for recepients
 ```
-npx hardhat run scripts/sendTokenBatches.ts
+npx hardhat run scripts/setAllocatedAmounts.ts
 ```

@@ -5,7 +5,7 @@ import { addGasLimitForRedefi, printDeploymentFee } from "./utils";
 async function main() {
   console.log("Deploying TestToken");
   let options = {};
-  await addGasLimitForRedefi(options, 500_000);
+  await addGasLimitForRedefi(options, 1_000_000);
   const token = await ethers.deployContract("TestToken", options);
   await token.waitForDeployment();
   console.log(`TestToken deployed to ${token.target}`);

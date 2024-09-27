@@ -1,10 +1,13 @@
 import {
   loadFixture,
+  mine,
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { Signer } from "ethers";
+import { Signer, AddressLike } from "ethers";
 import holders from "./holders.json";
+import { sleep } from "../scripts/utils";
+import { duration } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 
 describe("Distribute tokens", function () {
   let owner: Signer;
@@ -77,7 +80,8 @@ describe("Distribute tokens", function () {
     let maxGas = 0n;
     for (let i = 0; i < holders.length; i += BATCH_SIZE) {
       let length = Math.min(holders.length - i, BATCH_SIZE);
-      let response = await batchTransfer.batchTransfer(holders.slice(i, i + length), 1, tokenAddress);
+      let amounts = new Array(length).fill(1);
+      let response = await batchTransfer.batchTransfer(holders.slice(i, i + length), amounts, tokenAddress);
       let receipt = await ethers.provider.getTransactionReceipt(response.hash);
       totalGasPrice += receipt!.gasUsed;
       if (receipt!.gasUsed > maxGas)
@@ -293,3 +297,104 @@ describe("Distribute tokens", function () {
     console.log(`Eth spent ${ethBefore - ethAfter}`);
   });
 })
+
+describe("Vesting", function () {
+  const BATCH_SIZE = 50;
+  const ONE_TOKEN = ethers.parseUnits("1", 18);
+  let owner: Signer;
+  let user: Signer;
+
+  async function deployTestToken() {
+    [owner] = await ethers.getSigners();
+    const TestToken = await ethers.getContractFactory("TestToken", owner);
+    const testToken = await TestToken.deploy();
+
+    await testToken.mint(await owner.getAddress(), 1000);
+    return testToken;
+  }
+
+  async function deployVesting(token: AddressLike) {
+    const Vesting = await ethers.getContractFactory("Vesting", owner);
+    const now = Date.now();
+    const vesting = await Vesting.deploy(token, now, 1);
+    await vesting.waitForDeployment();
+    let receipt = await ethers.provider.getTransactionReceipt( vesting.deploymentTransaction()!.hash);
+    console.log("deploy cost", receipt?.gasUsed);
+
+    return vesting;
+  }
+
+  async function initVesting() {
+    [owner, user] = await ethers.getSigners();
+    const TestToken = await ethers.getContractFactory("TestToken", owner);
+    const token = await TestToken.deploy();
+
+    const Vesting = await ethers.getContractFactory("Vesting", owner);
+    const now = Date.now();
+    const vesting = await Vesting.deploy(token, Math.floor(now / 1000) + 100, 100);
+    let beneficiaries = holders.concat(await user.getAddress());
+    const totalAmount = BigInt(beneficiaries.length) * ONE_TOKEN;
+    await token.mint(owner, totalAmount);
+    await token.approve(await vesting.getAddress(), totalAmount);
+    for (let i = 0; i < beneficiaries.length; i += BATCH_SIZE) {
+      let length = Math.min(beneficiaries.length - i, BATCH_SIZE);
+      let amounts = new Array(length).fill(ONE_TOKEN);
+      let response = await vesting.batchSetVested(beneficiaries.slice(i, i + length), amounts);
+      await response.wait();
+    }
+    return {token, vesting};
+  }
+
+  async function getTimestamp() {
+    const blockNumber = await ethers.provider.getBlockNumber();
+    return BigInt((await ethers.provider.getBlock(blockNumber))!.timestamp);
+  }
+
+  it("should deploy", async function () {
+    const testToken = await loadFixture(deployTestToken);
+    const vesting = await deployVesting(testToken);
+  });
+
+  it("should set vesting amounts", async function () {
+    const testToken = await loadFixture(deployTestToken);
+    const vesting = await deployVesting(testToken);
+    let totalGasPrice = 0n;
+    const totalAmount = BigInt(holders.length) * ONE_TOKEN;
+    await testToken.mint(owner, totalAmount);
+    await testToken.approve(await vesting.getAddress(), totalAmount);
+    for (let i = 0; i < holders.length; i += BATCH_SIZE) {
+      let length = Math.min(holders.length - i, BATCH_SIZE);
+      let amounts = new Array(length).fill(ONE_TOKEN);
+      let response = await vesting.batchSetVested(holders.slice(i, i + length), amounts);
+      let receipt = await ethers.provider.getTransactionReceipt(response.hash);
+      totalGasPrice += receipt!.gasUsed;
+    }
+    console.log("totalGasPrice", totalGasPrice);
+  });
+
+  it("should not set vesting amounts with not enough tokens", async function () {
+    const testToken = await loadFixture(deployTestToken);
+    const vesting = await deployVesting(testToken);
+    let length = Math.min(holders.length, BATCH_SIZE);
+    let amounts = new Array(length).fill(ONE_TOKEN);
+    await expect(vesting.batchSetVested(holders.slice(0, length), amounts)).to.be.rejectedWith("vested more then tokens available");
+  });
+
+  it("should release tokens", async function () {
+    const { token, vesting } = await loadFixture(initVesting);
+    const vestingStart = await vesting.start();
+    const vestingDuration = await vesting.duration();
+    expect(await vesting.connect(user).releasable(holders[0])).to.eq(0n);
+    await mine(100);
+    const timestamp = await getTimestamp();
+    const releasable = await vesting.connect(user).releasable(holders[0]);
+    const expected = ONE_TOKEN * (timestamp - vestingStart) / vestingDuration;
+    expect(releasable).to.be.eq(expected);
+    await mine(100);
+    expect(await vesting.connect(user).releasable(holders[0])).to.be.eq(ethers.parseUnits("1", 18));
+    const tx = await vesting.connect(user).release();
+    const receipt = await tx.wait();
+    console.log("release cost", receipt!.gasUsed);
+    expect(await token.balanceOf(user)).to.eq(ONE_TOKEN);
+  });
+});

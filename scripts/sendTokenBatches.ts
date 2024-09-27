@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { BatchTransfer } from "../typechain-types";
-import { addGasLimitForRedefi, printTransactionFee, readHolders } from "./utils";
+import { addGasLimitForRedefi, printTransactionFee, readHolders, sleep, waitForGoodGasPrice } from "./utils";
 import * as fs from 'fs';
 import dotenv from "dotenv";
 
@@ -58,26 +58,6 @@ async function getLastRecepient(tokenAddress: string, batchTransfer: BatchTransf
     return holders.indexOf(lastRecepient.toLowerCase());
   } else
     return -1;
-}
-
-async function waitForGoodGasPrice() {
-  const LOG_PERIOD = 10000;
-  const RETRY_PERIOD = 2000;
-
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-  let lastPriceLogTime = 0;
-  while (true) {
-    const feeData = await ethers.provider.getFeeData();
-    if (feeData.gasPrice && feeData.gasPrice <= MAXIMUM_GAS_PRICE)
-      break;
-    const now = Date.now();
-    if (now - lastPriceLogTime > LOG_PERIOD) {
-      console.log("Waiting for good gas price. Current price is", ethers.formatUnits(feeData.gasPrice || 0, "gwei"), "target price", ethers.formatUnits(MAXIMUM_GAS_PRICE, "gwei"));
-      lastPriceLogTime = now;
-    }
-    await sleep(RETRY_PERIOD);
-  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

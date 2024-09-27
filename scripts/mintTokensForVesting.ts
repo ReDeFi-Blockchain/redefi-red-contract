@@ -13,20 +13,11 @@ async function main() {
     totalAmount +=  ethers.parseUnits(holders[i].Amount, 18);
   }
   {
-    const [owner] = await ethers.getSigners();
-    let options = {};
-    await addGasLimitForRedefi(options, 100_000);
-    const tx = await testToken.mint(await owner.getAddress(), totalAmount, options);
-    await printTransactionFee(tx);
-    console.log("Minted", totalAmount);
-  }
-  {
-    console.log("Approving tokens");
     let options = {};
     await addGasLimitForRedefi(options, 60_000);
-    const tx = await testToken.approve(process.env.BATCH_CONTRACT_ADDRESS!, totalAmount, options);
+    const tx = await testToken.mint(process.env.VESTING_CONTRACT_ADDRESS!, totalAmount, options);
     await printTransactionFee(tx);
-    console.log("Approved");
+    console.log("Minted", totalAmount);
   }
 }
 
