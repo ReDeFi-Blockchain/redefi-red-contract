@@ -17,7 +17,12 @@ async function main() {
     let options = {};
     await addGasLimitForRedefi(options, 1_000_000);
     const tx = await token.mint(await owner.getAddress(), totalAmount, options);
-    await printTransactionFee(tx);
+    try {
+      await printTransactionFee(tx);
+    } catch (e) {
+      const code = await token.mint.staticCall(await owner.getAddress(), totalAmount, options);
+      console.log(code);
+    }
     console.log("Minted", totalAmount);
   }
 }
