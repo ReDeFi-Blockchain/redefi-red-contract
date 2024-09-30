@@ -15,7 +15,7 @@ async function main() {
   {
     const [owner] = await ethers.getSigners();
     let options = {};
-    await addGasLimitForRedefi(options, 200_000);
+    await addGasLimitForRedefi(options, 1_000_000);
     const tx = await token.mint(await owner.getAddress(), totalAmount, options);
     await printTransactionFee(tx);
     console.log("Minted", totalAmount);
