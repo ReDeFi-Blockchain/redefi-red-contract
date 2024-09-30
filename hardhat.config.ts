@@ -5,7 +5,7 @@ import { secrets } from "./secrets";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.20",
-  defaultNetwork: "sepolia",
+  defaultNetwork: "testredefi",
   networks: {
     hardhat: {
     },

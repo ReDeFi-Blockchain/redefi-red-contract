@@ -298,7 +298,7 @@ describe("Distribute tokens", function () {
   });
 })
 
-describe("Vesting", function () {
+describe("ReDeFiAirdropOct2024", function () {
   const BATCH_SIZE = 50;
   const ONE_TOKEN = ethers.parseUnits("1", 18);
   let owner: Signer;
@@ -314,7 +314,7 @@ describe("Vesting", function () {
   }
 
   async function deployVesting(token: AddressLike) {
-    const Vesting = await ethers.getContractFactory("Vesting", owner);
+    const Vesting = await ethers.getContractFactory("ReDeFiAirdropOct2024", owner);
     const now = Date.now();
     const vesting = await Vesting.deploy(token, now, 1);
     await vesting.waitForDeployment();
@@ -329,7 +329,7 @@ describe("Vesting", function () {
     const TestToken = await ethers.getContractFactory("TestToken", owner);
     const token = await TestToken.deploy();
 
-    const Vesting = await ethers.getContractFactory("Vesting", owner);
+    const Vesting = await ethers.getContractFactory("ReDeFiAirdropOct2024", owner);
     const now = Date.now();
     const vesting = await Vesting.deploy(token, Math.floor(now / 1000) + 100, 100);
     let beneficiaries = holders.concat(await user.getAddress());

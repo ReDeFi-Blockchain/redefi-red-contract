@@ -47,13 +47,13 @@ Fill private keys and infura api key.
 ```
 cp .env.example .env
 ```
-5. Set `TOKEN_ADDRESS` in `.env` to REDToken address
+5. Set `ERC20_TOKEN_ADDRESS` in `.env` to REDToken address
 6. Set `VESTING_START_SEC` to unix time when vesting should be started. Set `VESTING_DURATION_SEC` to vesting duration in seconds.
 7. Deploy Vesting contract.
 ```
 npx hardhat run scripts/deployBatchSender.ts
 ```
-8. Set `VESTING_CONTRACT_ADDRESS` in .env file.
+8. Set `REDEFI_AIRDROP_OCT2024_CONTRACT_ADDRESS` in .env file.
 9. Approve tokens to be used by Vesting contract.
 ```
 npx hardhat run scripts/approveTokensForVestingContract.ts

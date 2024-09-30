@@ -7,7 +7,7 @@ dotenv.config();
 async function main() {
   console.log("Minting tokens");
   const holders = await readBaxHolders();
-  const testToken = await ethers.getContractAt("TestToken", process.env.TOKEN_ADDRESS!);
+  const testToken = await ethers.getContractAt("TestToken", process.env.ERC20_TOKEN_ADDRESS!);
   let totalAmount = 0n;
   for (let i = 0; i < holders.length; i++) {
     totalAmount +=  ethers.parseUnits(holders[i].Amount, 18);

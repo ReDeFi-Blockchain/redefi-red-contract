@@ -9,7 +9,7 @@ dotenv.config();
 
 async function main() {
     const holders = await readBaxHolders();
-    const vesting = await ethers.getContractAt("Vesting", process.env.VESTING_CONTRACT_ADDRESS!);
+    const vesting = await ethers.getContractAt("ReDeFiAirdropOct2024", process.env.REDEFI_AIRDROP_OCT2024_CONTRACT_ADDRESS!);
     //amount of tokens holder can receive right now
     const releasable = await vesting.releasable(holders[0].HolderAddress);
     console.log("releasable", releasable);
@@ -20,9 +20,10 @@ async function main() {
     const allocatedAmount = await vesting.allocatedAmount(holders[0].HolderAddress);
     console.log("allocatedAmount", allocatedAmount);
     //method for holder to receive releasable tokens
+    const [user] = await ethers.getSigners();
     let options = {};
     await addGasLimitForRedefi(options, 1_400_000);
-    await vesting.release(options);
+    await vesting.connect(user).release(options);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

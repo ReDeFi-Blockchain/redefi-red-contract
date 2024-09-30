@@ -6,12 +6,12 @@ dotenv.config();
 
 async function main() {
   const [signer] = await ethers.getSigners();
-  const redToken = await ethers.getContractAt("REDToken", process.env.TOKEN_ADDRESS!);
+  const redToken = await ethers.getContractAt("REDToken", process.env.ERC20_TOKEN_ADDRESS!);
   const balance = await redToken.balanceOf(signer);
   console.log(`Approving ${balance} tokens`);
   let options = {};
   await addGasLimitForRedefi(options, 60_000);
-  const tx = await redToken.approve(process.env.VESTING_CONTRACT_ADDRESS!, balance, options);
+  const tx = await redToken.approve(process.env.REDEFI_AIRDROP_OCT2024_CONTRACT_ADDRESS!, balance, options);
   await printTransactionFee(tx);
   console.log("Approved");
 }

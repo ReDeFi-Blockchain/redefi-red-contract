@@ -6,7 +6,7 @@ dotenv.config();
 
 async function main() {
   const [signer] = await ethers.getSigners();
-  const redToken = await ethers.getContractAt("REDToken", process.env.TOKEN_ADDRESS!);
+  const redToken = await ethers.getContractAt("REDToken", process.env.ERC20_TOKEN_ADDRESS!);
   const balance = await redToken.balanceOf(signer);
   console.log(`Approving ${balance} tokens`);
   let options = {};

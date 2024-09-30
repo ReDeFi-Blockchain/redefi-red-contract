@@ -1,10 +1,8 @@
 import { network, ethers } from "hardhat";
-import * as fs from 'fs';
-import { Vesting } from "../typechain-types";
-import { addGasLimitForRedefi, printDeploymentFee, printTransactionFee, readBaxHolders, waitForGoodGasPrice } from "./utils";
+import { ReDeFiAirdropOct2024 } from "../typechain-types";
+import { addGasLimitForRedefi, printTransactionFee, readBaxHolders, waitForGoodGasPrice } from "./utils";
 
 import dotenv from "dotenv";
-import { token } from "../typechain-types/@openzeppelin/contracts";
 
 dotenv.config();
 
@@ -14,8 +12,8 @@ async function main() {
     const BATCH_SIZE = 50;
     const [owner] = await ethers.getSigners();
     const holders = await readBaxHolders();
-    const token = await ethers.getContractAt("REDToken", process.env.TOKEN_ADDRESS!);
-    const vesting = await ethers.getContractAt("Vesting", process.env.VESTING_CONTRACT_ADDRESS!);
+    const token = await ethers.getContractAt("REDToken", process.env.ERC20_TOKEN_ADDRESS!);
+    const vesting = await ethers.getContractAt("ReDeFiAirdropOct2024", process.env.REDEFI_AIRDROP_OCT2024_CONTRACT_ADDRESS!);
     let options = {};
     await addGasLimitForRedefi(options, 1_400_000);
     const lastRecepientIndex = await getLastRecepient(vesting, holders);
@@ -42,13 +40,13 @@ async function main() {
     console.log("Finished batched sending.");
 }
 
-async function getLastRecepient(vesting: Vesting, holders: string[]) {
+async function getLastRecepient(vesting: ReDeFiAirdropOct2024, holders: string[]) {
     const eventFilter = vesting.filters["BatchAddBenefitiaries(address)"]();
     const currentBlock = await ethers.provider.getBlockNumber();
     const block = Math.max(currentBlock - EVENT_FILTER_RANGE, 0);
     const events = await vesting.queryFilter(eventFilter, block);
     if (events.length > 0) {
-      const lastRecepient = events[events.length - 1].args[2];
+      const lastRecepient = events[events.length - 1].args[0];
       console.log("lastRecepient", lastRecepient);
       return holders.indexOf(lastRecepient.toLowerCase());
     } else

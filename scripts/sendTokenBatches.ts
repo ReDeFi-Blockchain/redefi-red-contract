@@ -18,7 +18,7 @@ async function main() {
   const batchTransfer = await ethers.getContractAt("BatchTransfer", process.env.BATCH_CONTRACT_ADDRESS!);
   const [owner] = await ethers.getSigners();
 
-  const tokenAddress = process.env.TOKEN_ADDRESS!;
+  const tokenAddress = process.env.ERC20_TOKEN_ADDRESS!;
   const redToken = await ethers.getContractAt("REDToken", tokenAddress);
   console.log("Sender balance", await redToken.balanceOf(owner));
 
