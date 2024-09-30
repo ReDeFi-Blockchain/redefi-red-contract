@@ -13,7 +13,7 @@ contract Vesting is Ownable {
     address _redToken;
     mapping(address beneficiary => uint256) private _redReleased;
     mapping(address beneficiary => uint256) private _redAllocated;
-    uint256 private _totalVested;
+    uint256 private _totalAllocated;
     uint64 private immutable _start;
     uint64 private immutable _duration;
 
@@ -35,9 +35,9 @@ contract Vesting is Ownable {
         for (uint256 i = 0; i < beneficiaries.length; i++) {
             address beneficiary = beneficiaries[i];
             _redAllocated[beneficiary] = allocatedAmounts[i];
-            _totalVested += allocatedAmounts[i];
+            _totalAllocated += allocatedAmounts[i];
         }
-        require(IERC20(_redToken).allowance(owner(), address(this)) >= _totalVested, "vested more then tokens available");
+        require(IERC20(_redToken).allowance(owner(), address(this)) >= _totalAllocated, "vested more then tokens available");
         emit BatchSetVested(beneficiaries[beneficiaries.length - 1]);
     }
 
