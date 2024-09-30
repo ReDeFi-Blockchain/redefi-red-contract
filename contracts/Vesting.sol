@@ -18,8 +18,7 @@ contract Vesting is Ownable {
     uint64 private immutable _duration;
 
     /**
-     * @dev Sets the sender as the initial owner, the beneficiary as the pending owner, the start timestamp and the
-     * vesting duration of the vesting wallet.
+     * @dev Sets vested token, the start timestamp and the vesting duration of the vesting wallet.
      */
     constructor(address redToken, uint64 startTimestamp, uint64 durationSeconds) payable Ownable(msg.sender) {
         _start = startTimestamp;
