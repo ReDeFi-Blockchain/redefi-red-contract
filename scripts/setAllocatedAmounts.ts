@@ -16,7 +16,7 @@ async function main() {
     const vesting = await ethers.getContractAt("ReDeFiAirdropOct2024", process.env.REDEFI_AIRDROP_OCT2024_CONTRACT_ADDRESS!);
     let options = {};
     await addGasLimitForRedefi(options, 1_400_000);
-    const lastRecepientIndex = await getLastRecepient(vesting, holders);
+    const lastRecepientIndex = await getLastRecepient(vesting, holders.map(holder => holder.HolderAddress));
     console.log("lastRecepientId", lastRecepientIndex);
     console.log(`Starting batched setting of vested amounts. Batch size = ${BATCH_SIZE}`);
     let ownerBalance = await token.balanceOf(owner);

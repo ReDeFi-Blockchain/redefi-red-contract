@@ -7,13 +7,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 async function main() {
-    const token = process.env.ERC20_ERC20_TOKEN_ADDRESS!;
+    const token = process.env.ERC20_TOKEN_ADDRESS!;
     const vestingStart = Number.parseInt(process.env.VESTING_START_SEC!);
     const vestingDuration = Number.parseInt(process.env.VESTING_DURATION_SEC!);
 
     console.log("Deploying ReDeFiAirdropOct2024");
     let options = {};
-    await addGasLimitForRedefi(options, 1_500_000);
+    await addGasLimitForRedefi(options, 1_400_000);
     await waitForGoodGasPrice();
     const vesting = await ethers.deployContract("ReDeFiAirdropOct2024", [token, vestingStart, vestingDuration], options);
     await vesting.waitForDeployment();
