@@ -13,12 +13,12 @@ async function main() {
 
     console.log("Deploying Vesting");
     let options = {};
-    await addGasLimitForRedefi(options, 1_300_000);
+    await addGasLimitForRedefi(options, 1_500_000);
     await waitForGoodGasPrice();
     const vesting = await ethers.deployContract("Vesting", [token, vestingStart, vestingDuration], options);
     await vesting.waitForDeployment();
     console.log(`Vesting deployed to ${vesting.target}`);
-    fs.appendFileSync('contractDeployment.txt', `${Date.now()} ${network.name} Vesting ${vesting.target}\n`);
+    fs.appendFileSync('contractDeployment.txt', `${Date.now()} ${network.name} Vesting       ${vesting.target}\n`);
     await printDeploymentFee(vesting);
 
     
