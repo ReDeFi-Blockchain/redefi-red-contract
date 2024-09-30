@@ -1,14 +1,14 @@
 import { network, ethers } from "hardhat";
 import * as fs from 'fs';
 import { Vesting } from "../typechain-types";
-import { addGasLimitForRedefi, printDeploymentFee, printTransactionFee, readHolders, waitForGoodGasPrice } from "./utils";
+import { addGasLimitForRedefi, printDeploymentFee, printTransactionFee, readBaxHolders, waitForGoodGasPrice } from "./utils";
 
 import dotenv from "dotenv";
 
 dotenv.config();
 
 async function main() {
-    const holders = await readHolders();
+    const holders = await readBaxHolders();
     const vesting = await ethers.getContractAt("Vesting", process.env.VESTING_CONTRACT_ADDRESS!);
     //amount of tokens holder can receive right now
     const releasable = await vesting.releasable(holders[0].HolderAddress);

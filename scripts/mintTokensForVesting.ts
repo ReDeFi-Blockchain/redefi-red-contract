@@ -1,12 +1,12 @@
 import { ethers } from "hardhat";
-import { addGasLimitForRedefi, printTransactionFee, readHolders } from "./utils";
+import { addGasLimitForRedefi, printTransactionFee, readBaxHolders } from "./utils";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 async function main() {
   console.log("Minting tokens");
-  const holders = await readHolders();
+  const holders = await readBaxHolders();
   const testToken = await ethers.getContractAt("TestToken", process.env.TOKEN_ADDRESS!);
   let totalAmount = 0n;
   for (let i = 0; i < holders.length; i++) {

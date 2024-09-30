@@ -50,7 +50,7 @@ function parseCSV(filePath: string): Promise<any[]> {
   });
 }
 
-export async function readHolders() {
+export async function readBaxHolders() {
   let holders = (await parseCSV('scripts/holders.csv'));
   
   return holders;
@@ -69,8 +69,8 @@ export async function sleep(ms: number) {
 
 export async function waitForGoodGasPrice() {
   const MAXIMUM_GAS_PRICE = Number.parseInt(process.env.MAXIMUM_GAS_PRICE!);
-  const LOG_PERIOD = 10000;
-  const RETRY_PERIOD = 2000;
+  const LOG_PERIOD = 10000;  //ms
+  const RETRY_PERIOD = 2000; //ms
 
   let lastPriceLogTime = 0;
   while (true) {

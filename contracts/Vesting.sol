@@ -8,12 +8,11 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Vesting is Ownable {
     event RedReleased(address indexed beneficiary, uint256 amount);
-    event BatchSetVested(address indexed beneficiary);
+    event BatchAddBenefitiaries(address indexed beneficiary);
 
     address _redToken;
     mapping(address beneficiary => uint256) private _redReleased;
     mapping(address beneficiary => uint256) private _redAllocated;
-    uint256 private _totalAllocated;
     uint64 private immutable _start;
     uint64 private immutable _duration;
 
@@ -26,7 +25,7 @@ contract Vesting is Ownable {
         _redToken = redToken;
     }
 
-    function batchSetVested(
+    function batchAddBenefitiaries(
         address[] calldata beneficiaries,
         uint256[] calldata allocatedAmounts
     ) external onlyOwner {
@@ -34,10 +33,8 @@ contract Vesting is Ownable {
         for (uint256 i = 0; i < beneficiaries.length; i++) {
             address beneficiary = beneficiaries[i];
             _redAllocated[beneficiary] = allocatedAmounts[i];
-            _totalAllocated += allocatedAmounts[i];
         }
-        require(IERC20(_redToken).allowance(owner(), address(this)) >= _totalAllocated, "vested more then tokens available");
-        emit BatchSetVested(beneficiaries[beneficiaries.length - 1]);
+        emit BatchAddBenefitiaries(beneficiaries[beneficiaries.length - 1]);
     }
 
     receive() external payable onlyOwner {}

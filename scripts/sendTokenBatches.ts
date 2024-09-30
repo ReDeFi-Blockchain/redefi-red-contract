@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { BatchTransfer } from "../typechain-types";
-import { addGasLimitForRedefi, printTransactionFee, readHolders, sleep, waitForGoodGasPrice } from "./utils";
+import { addGasLimitForRedefi, printTransactionFee, readBaxHolders, sleep, waitForGoodGasPrice } from "./utils";
 import * as fs from 'fs';
 import dotenv from "dotenv";
 
@@ -12,7 +12,7 @@ const EVENT_FILTER_RANGE = Number.parseInt(process.env.EVENT_FILTER_RANGE!);
 async function main() {
   const BATCH_SIZE = 50;
 
-  const holders = await readHolders();
+  const holders = await readBaxHolders();
   const tokensPerPerson = ethers.parseUnits(process.env.TOKENS_PER_PERSON!, 18);
   
   const batchTransfer = await ethers.getContractAt("BatchTransfer", process.env.BATCH_CONTRACT_ADDRESS!);

@@ -339,7 +339,7 @@ describe("Vesting", function () {
     for (let i = 0; i < beneficiaries.length; i += BATCH_SIZE) {
       let length = Math.min(beneficiaries.length - i, BATCH_SIZE);
       let amounts = new Array(length).fill(ONE_TOKEN);
-      let response = await vesting.batchSetVested(beneficiaries.slice(i, i + length), amounts);
+      let response = await vesting.batchAddBenefitiaries(beneficiaries.slice(i, i + length), amounts);
       await response.wait();
     }
     return {token, vesting};
@@ -365,7 +365,7 @@ describe("Vesting", function () {
     for (let i = 0; i < holders.length; i += BATCH_SIZE) {
       let length = Math.min(holders.length - i, BATCH_SIZE);
       let amounts = new Array(length).fill(ONE_TOKEN);
-      let response = await vesting.batchSetVested(holders.slice(i, i + length), amounts);
+      let response = await vesting.batchAddBenefitiaries(holders.slice(i, i + length), amounts);
       let receipt = await ethers.provider.getTransactionReceipt(response.hash);
       totalGasPrice += receipt!.gasUsed;
     }
@@ -377,7 +377,7 @@ describe("Vesting", function () {
     const vesting = await deployVesting(testToken);
     let length = Math.min(holders.length, BATCH_SIZE);
     let amounts = new Array(length).fill(ONE_TOKEN);
-    await expect(vesting.batchSetVested(holders.slice(0, length), amounts)).to.be.rejectedWith("vested more then tokens available");
+    await expect(vesting.batchAddBenefitiaries(holders.slice(0, length), amounts)).to.be.rejectedWith("vested more then tokens available");
   });
 
   it("should release tokens", async function () {
