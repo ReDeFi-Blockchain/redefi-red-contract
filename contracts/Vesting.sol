@@ -43,6 +43,9 @@ contract Vesting is Ownable {
 
     receive() external payable onlyOwner {}
 
+    function token() external  view returns (address) {
+        return _redToken;
+    }
     /**
      * @dev Getter for the start timestamp.
      */
