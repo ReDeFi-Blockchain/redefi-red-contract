@@ -48,7 +48,7 @@ Fill private keys and infura api key.
 cp .env.example .env
 ```
 5. Set `ERC20_TOKEN_ADDRESS` in `.env` to REDToken address
-6. Set `VESTING_START_SEC` to unix time when vesting should be started. Set `VESTING_DURATION_SEC` to vesting duration in seconds.
+6. Set `VESTING_START_SEC` to unix time when vesting should be started. Set `VESTING_DURATION_SEC` to vesting duration in seconds. Use https://www.unixtimestamp.com/
 7. Deploy Vesting contract.
 ```
 npx hardhat run scripts/deployBatchSender.ts

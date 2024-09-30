@@ -20,8 +20,6 @@ async function main() {
     console.log(`ReDeFiAirdropOct2024 deployed to ${vesting.target}`);
     fs.appendFileSync('contractDeployment.txt', `${Date.now()} ${network.name} ReDeFiAirdropOct2024 ${vesting.target}\n`);
     await printDeploymentFee(vesting);
-
-    
 }
 
 // We recommend this pattern to be able to use async/await everywhere

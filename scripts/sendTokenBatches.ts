@@ -34,7 +34,7 @@ async function main() {
     const length = Math.max(Math.min(holders.length - i, BATCH_SIZE), 0);
     const slice = holders.slice(i, i + length);
     const recepients = slice.map(holder => holder.HolderAddress);
-    const amounts = slice.map(holder => ethers.parseUnits(holder.Amount, 18));
+    const amounts = slice.map(holder => ethers.parseUnits(holder.RedAmount, 18));
     console.log("Starting batch transfer");
     const tx = await batchTransfer.batchTransfer(recepients, amounts, tokenAddress, options);
     console.log("Waiting for receipt");

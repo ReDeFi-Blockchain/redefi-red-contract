@@ -10,7 +10,7 @@ async function main() {
   const testToken = await ethers.getContractAt("TestToken", process.env.ERC20_TOKEN_ADDRESS!);
   let totalAmount = 0n;
   for (let i = 0; i < holders.length; i++) {
-    totalAmount +=  ethers.parseUnits(holders[i].Amount, 18);
+    totalAmount +=  ethers.parseUnits(holders[i].RedAmount, 18);
   }
   {
     const [owner] = await ethers.getSigners();

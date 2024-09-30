@@ -25,7 +25,7 @@ async function main() {
         const length = Math.min(holders.length - i, BATCH_SIZE);
         const slice = holders.slice(i, i + length);
         let addresses = slice.map(holder => holder.HolderAddress);
-        let amounts = slice.map(holder => ethers.parseUnits(holder.Amount, 18));
+        let amounts = slice.map(holder => ethers.parseUnits(holder.RedAmount, 18));
         await waitForGoodGasPrice();
         console.log("Starting batch");
         let tx = await vesting.batchAddBenefitiaries(addresses, amounts, options);

@@ -7,15 +7,16 @@ dotenv.config();
 async function main() {
   console.log("Minting tokens");
   const holders = await readBaxHolders();
-  const testToken = await ethers.getContractAt("TestToken", process.env.ERC20_TOKEN_ADDRESS!);
+  const token = await ethers.getContractAt("REDToken", process.env.ERC20_TOKEN_ADDRESS!);
   let totalAmount = 0n;
   for (let i = 0; i < holders.length; i++) {
     totalAmount +=  ethers.parseUnits(holders[i].RedAmount, 18);
   }
   {
+    const [owner] = await ethers.getSigners();
     let options = {};
-    await addGasLimitForRedefi(options, 60_000);
-    const tx = await testToken.mint(process.env.REDEFI_AIRDROP_OCT2024_CONTRACT_ADDRESS!, totalAmount, options);
+    await addGasLimitForRedefi(options, 200_000);
+    const tx = await token.mint(await owner.getAddress(), totalAmount, options);
     await printTransactionFee(tx);
     console.log("Minted", totalAmount);
   }
